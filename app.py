@@ -1,4 +1,4 @@
-from flask import Flask, render_template
+from flask import Flask, render_template, request, redirect
 
 app = Flask(__name__)
 
@@ -34,3 +34,16 @@ dog_links = [
 @app.get("/")
 def homepage():
     return render_template("index.html", links=dog_links)
+
+@app.post("/vote/<link_title>")
+def vote(link_title):
+    vote = request.form.get("vote")
+    for i, title in enumerate(dog_links):
+        if title["title"] == link_title:
+            if vote == "up":
+                dog_links[i]["score"] += 1
+            elif vote == "down":
+                dog_links[i]["score"] -= 1
+            break
+    dog_links.sort(key=lambda x: x["score"], reverse=True)
+    return redirect("/")

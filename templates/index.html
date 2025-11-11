@@ -90,11 +90,11 @@
       <ul>
         {% for link in links %}
         <li>
-          <div class="votes">
-            <button class="up">▲</button>
-            <div class="score" data-score>{{ link.score }}</div>
+          <form method="post" action="/vote/{{ link.title | urlencode}}">
+            <button name = "vote" value="up" class="up">▲</button>
+            <div name = "vote" value="up" class="score" data-score>{{ link.score }}</div>
             <button class="down">▼</button>
-          </div>
+          </form>
           <div class="content">
             <p class="title">
               <a href="{{ link.url }}" target="_blank" rel="noopener noreferrer"
