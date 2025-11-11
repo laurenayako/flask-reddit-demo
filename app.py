@@ -35,7 +35,7 @@ dog_links = [
 def homepage():
     return render_template("index.html", links=dog_links)
 
-@app.post("/vote/<link_title>")
+@app.post("/vote/<path:link_title>")
 def vote(link_title):
     vote = request.form.get("vote")
     for i, title in enumerate(dog_links):
