@@ -113,5 +113,20 @@
         {% endfor %}
       </ul>
     </main>
+    <form action="/add_link" method="POST">
+      <label for="title">
+        Title:
+        <input id="title" name="title">
+      </label>
+
+      <label for="url">
+        URL:
+        <input id="url" name="url">
+      </label>
+      <button type="submit">Submit</button>
+    </form>
+    {% if error %}
+      <p style="color: red">{{ error }}</p>
+    {% endif %}
   </body>
 </html>

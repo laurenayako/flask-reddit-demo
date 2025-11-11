@@ -47,3 +47,16 @@ def vote(link_title):
             break
     dog_links.sort(key=lambda x: x["score"], reverse=True)
     return redirect("/")
+
+@app.post("/add_link")
+def add_link():
+    title = request.form.get("title")
+    url = request.form.get("url")
+    if title and "http" in url:
+        dog_links.append({"title": title, "url": url, "score": 1})
+        dog_links.sort(key=lambda x: x["score"], reverse=True)
+        return redirect("/")
+    else:
+        error = "Error: Title and URL are required."
+        return render_template("index.html", links=dog_links, error=error)
+    
