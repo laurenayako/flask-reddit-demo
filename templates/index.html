@@ -43,14 +43,15 @@
         gap: 12px;
         padding: 12px 0;
         border-bottom: 1px solid rgba(127, 127, 127, 0.2);
+        position: relative;
       }
-      .votes {
+      .votes-form {
         display: flex;
         flex-direction: column;
         align-items: center;
         gap: 6px;
       }
-      div form {
+      .add-form form {
         display: grid;
         grid-template-columns: auto 1fr;
         gap: 1rem;
@@ -60,7 +61,7 @@
         grid-template-columns: subgrid;
         grid-column: 1/-1;
       }
-      button {
+      .add-form button {
         appearance: none;
         border: 1px solid rgba(127, 127, 127, 0.4);
         background: transparent;
@@ -74,6 +75,7 @@
       }
       .score {
         font-weight: 500;
+        margin: 0;
         width: fit-content;
       }
       .title {
@@ -88,6 +90,11 @@
       a {
         color: inherit;
       }
+      .hidden {
+        position: absolute;
+        top: .05rem;
+        right: .05rem;
+      }
     </style>
   </head>
 
@@ -101,46 +108,85 @@
     <main class="container">
       <ul>
         {% for link in links %}
-        <li>
-          <form method="post" action="/vote/{{ link.title | urlencode}}">
-            <button name = "vote" value="up" class="up">▲</button>
-            <div name = "vote" value="up" class="score" data-score>{{ link.score }}</div>
-            <button class="down">▼</button>
-          </form>
-          <div class="content">
-            <p class="title">
-              <a href="{{ link.url }}" target="_blank" rel="noopener noreferrer"
-                >{{ link.title }}</a
-              >
-            </p>
-            <a
-              class="url"
-              href="{{ link.url }}"
-              target="_blank"
-              rel="noopener noreferrer"
-              >{{ link.url }}</a
-            >
-          </div>
-        </li>
+          {% if not link.hidden %}
+          <li>
+            <form method="post" action="/vote/{{ link.title | urlencode}}">
+              <button name = "vote" value="up" class="score vote">▲</button>
+              <div name = "vote" value="up" class="score vote" data-score>{{ link.score }}</div>
+              <button name="vote" value="down" class="score vote">▼</button>
+            </form>
+            <div class="content">
+              <p class="title">
+                <a href="{{ link.url }}" target="_blank" rel="noopener noreferrer"
+                  >{{ link.title }}</a
+                >
+              </p>
+              <a
+                class="url"
+                href="{{ link.url }}"
+                target="_blank"
+                rel="noopener noreferrer"
+                >{{ link.url }}</a>
+              <form method="post" action="/hide/{{ link.title | urlencode}}">
+                 <button type="submit" class = "hidden" value="not_hidden">Hide</button>
+              </form>
+            </div>
+          </li>
+          {% endif %}
         {% endfor %}
-      </ul>
-    </main>
-    <div class = "container">
-      <form action="/add_link" method="POST">
-        <label for="title">
-          Title:
-          <input id="title" name="title">
-        </label>
+      </main>
+      <div class = "add-form">
+        <form action="/add_link" method="POST">
+          <label for="title">
+            Title:
+            <input id="title" name="title">
+          </label>
 
-        <label for="url">
-          URL:
-          <input id="url" name="url">
-        </label>
-        <button type="submit">Submit</button>
-      </form>
-    </div>
-    {% if error %}
-      <p style="color: red">{{ error }}</p>
-    {% endif %}
+          <label for="url">
+            URL:
+            <input id="url" name="url">
+          </label>
+          <button type="submit">Submit</button>
+        </form>
+      </div>
+      {% if error %}
+        <p style="color: red">{{ error }}</p>
+      {% endif %}
+      </ul>
+      <div class="container">
+        <h2>Hidden Posts</h2>
+        <ul>
+          {% for link in links %}
+            {% if link.hidden %}
+            <li>
+              <div class="votes-form">
+                <form method="post" action="/vote/{{ link.title | urlencode}}">
+                  <button name = "vote" value="up" class="score vote">▲</button>
+                  <div name = "vote" value="up" class="score vote" data-score>{{ link.score }}</div>
+                  <button name="vote" value="down" class="score vote">▼</button>
+                </form>
+              </div>
+              <div class="content">
+                <p class="title">
+                  <a href="{{ link.url }}" target="_blank" rel="noopener noreferrer"
+                    >{{ link.title }}</a
+                  >
+                </p>
+                <a
+                  class="url"
+                  href="{{ link.url }}"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  >{{ link.url }}</a
+                >
+              </div>
+              <form method="post" action="/unhide/{{ link.title | urlencode}}">
+                <button type="submit" class="hidden" value="hidden">Unhide</button>
+              </form>
+            </li>
+            {% endif %}
+          {% endfor %}
+        </ul>
+      </div>
   </body>
 </html>
