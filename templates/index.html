@@ -156,8 +156,7 @@
       <div class="container">
         <h2>Hidden Posts</h2>
         <ul>
-          {% for link in links %}
-            {% if link.hidden %}
+          {% for link in hidden_links %}
             <li>
               <div class="votes-form">
                 <form method="post" action="/vote/{{ link.title | urlencode}}">
@@ -184,7 +183,6 @@
                 <button type="submit" class="hidden" value="hidden">Unhide</button>
               </form>
             </li>
-            {% endif %}
           {% endfor %}
         </ul>
       </div>
